@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 const PrivateRoute = props => {
 
-    const { isAuthenticated, component, ...rest } = props;
+    const { isAuthenticated, component: Component, ...rest } = props;
 
     return (
         <Route
@@ -14,7 +14,9 @@ const PrivateRoute = props => {
                 !isAuthenticated ?
                     (<Redirect to='/sign-in' />)
                     :
-                    (<Component {...props} />)}>
+                    (<Component {...props} />)
+            }
+        >
         </Route>
     )
 }
