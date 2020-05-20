@@ -13,21 +13,21 @@ export const addTicket = async (ticketData) => {
 };
 
 export const getAllTickets = async () => {
-    const response = await axios.get(`${API_ENDPOINT}/tickets`, config);
+    const response = await axios.get(`${api_endpoint}/tickets`, config);
     return response;
 }
 
 export const editTicket = async (id, ticketData) => {
-    const response = await axios.put(`${API_ENDPOINT}/tickets/${id}`, ticketData, config);
+    const response = await axios.put(`${api_endpoint}/tickets/${id}`, ticketData, config);
     return response;
 }
 
 export const deleteTicket = async (id) => {
-    const response = await axios.delete(`${API_ENDPOINT}/tickets/${id}`, config);
+    const response = await axios.delete(`${api_endpoint}/tickets/${id}`, config);
     return response;
 }
 
 export const closeTicket = async (id) => {
-    const response = await axios.put(`${API_ENDPOINT}/tickets/${id}/close`, config);
+    const response = await axios.put(`${api_endpoint}/tickets/${id}/close`, config);
     return response;
 }
