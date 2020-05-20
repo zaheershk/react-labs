@@ -1,20 +1,14 @@
 import React, { Fragment, useState } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import './index.css';
 import { Box } from './Box';
 import { Button } from '../../shared/Button';
-import { Modal } from '../../shared/modal/Modal';
+import { addModal } from '../../../redux/actions/modal.actions';
 
-const Card = () => {
-    const [visible, setVisible] = useState(false);
-
-    const showModal = () => {
-        setVisible(true);
-    };
-
-    const dismissModal = () => {
-        setVisible(false);
-    };
+const Card = props => {
+    const { addModal } = props;
 
     return (
         <Fragment>
@@ -23,13 +17,7 @@ const Card = () => {
                     type='submit'
                     label='Add Ticket'
                     className='btn btn-primary btn-add'
-                    handleCLick={() => showModal()}
-                />
-                <Modal
-                    header='Add New Ticket'
-                    visible={visible}
-                    children='Test content...'
-                    dismiss={dismissModal}
+                    handleClick={() => addModal(true)}
                 />
                 <div className='text-center mb-2'>
                     <div className='row'>
@@ -46,4 +34,12 @@ const Card = () => {
     )
 }
 
-export { Card }
+Card.propTypes = {
+    addModal: PropTypes.func.isRequired
+};
+
+export default connect(
+    null,
+    { addModal }
+)(Card);
+

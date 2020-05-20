@@ -40,4 +40,24 @@ export const validateInputs = (userData, setError) => {
     setError(errorMsg);
 
     return formValid;
-}
+};
+
+export const departmentList = () => {
+    const result = [
+        { id: 1, title: 'IT', key: 'department' },
+        { id: 2, title: 'HR', key: 'department' },
+        { id: 3, title: 'Finance', key: 'department' },
+        { id: 4, title: 'Sales', key: 'department' },
+        { id: 5, title: 'Marketing', key: 'department' },
+    ];
+    return result;
+};
+
+export const priorityList = () => {
+    const result = [
+        { id: 1, title: 'High', key: 'priority' },
+        { id: 2, title: 'Medium', key: 'priority' },
+        { id: 3, title: 'Low', key: 'priority' },
+    ];
+    return result;
+};

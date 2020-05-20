@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage';
 
 import authReducer from './auth.reducer';
 import errorReducer from './error.reducer';
+import modalReducer from './modal.reducer';
 
 const persistConfig = {
     key: 'root',
@@ -12,7 +13,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
     auth: authReducer,
-    errors: errorReducer
+    errors: errorReducer,
+    modal: modalReducer
 });
 
 export default persistReducer(persistConfig, rootReducer);

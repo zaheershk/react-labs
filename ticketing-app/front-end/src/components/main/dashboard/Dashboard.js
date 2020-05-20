@@ -1,11 +1,21 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import './index.css';
-import { Card } from '../card/Card';
+import Card from '../card/Card';
 import { TableElements } from '../table-elements/TableElements';
-import { AddTicket } from '../tickets/add/AddTicket';
+import AddTicket from '../tickets/add/AddTicket';
+import { AuthToken } from '../../../utils/AuthToken';
 
-const Dashboard = () => {
+const Dashboard = props => {
+
+    const { token } = props;
+
+    useEffect(() => {
+        AuthToken(token);
+    }, [token])
+
     return (
         <Fragment>
             <div className='row'>
@@ -18,8 +28,18 @@ const Dashboard = () => {
                 </div>
             </div>
         </Fragment>
-
     )
 };
 
-export default Dashboard;
+Dashboard.propTypes = {
+    token: PropTypes.string
+};
+
+const mapStateToProps = state => ({
+    token: state.auth.token,
+});
+
+export default connect(
+    mapStateToProps,
+    {}
+)(Dashboard);

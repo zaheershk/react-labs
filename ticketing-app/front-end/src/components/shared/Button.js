@@ -6,12 +6,18 @@ const Button = props => {
         label,
         type,
         className,
-        handleClick
+        handleClick,
+        disabled
     } = props;
 
     return (
         <Fragment>
-            <button type={type} className={className} onClick={handleClick} >
+            <button
+                type={type}
+                className={className}
+                onClick={handleClick}
+                disabled={disabled}
+            >
                 {label}
             </button>
         </Fragment>
@@ -28,6 +34,7 @@ Button.propTypes = {
     type: PropTypes.string,
     className: PropTypes.string,
     handleClick: PropTypes.func,
+    disabled: PropTypes.bool
 }
 
 export { Button };

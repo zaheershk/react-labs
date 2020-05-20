@@ -1,15 +1,84 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 
 import { FormInput } from '../../../shared/FormInput';
 import { Button } from '../../../shared/Button';
+import { Dropdown } from '../../../shared/dropdown/Dropdown';
+import { departmentList, priorityList } from '../../../../utils/Helpers';
+import { addTicket } from '../../../../services/ticket.service';
 
-const AddTicketForm = () => {
+const AddTicketForm = props => {
+    const { addModal } = props;
 
-    const onChange = e => { };
+    let departments = departmentList();
+    let priorities = priorityList();
+
+    const [department, setDepartment] = useState('Select Department');
+    const [priority, setPriority] = useState('Select Priority');
+    const [ticket, setTicket] = useState({
+        data: {
+            fullname: '',
+            email: '',
+            department: '',
+            priority: '',
+            subject: '',
+            description: ''
+        }
+    });
+
+    const {
+        fullname,
+        email,
+        subject,
+        description
+    } = ticket.data;
+
+    const getDropdownValue = item => {
+        if (item.key === 'department') {
+            setDepartment(item.title);
+        }
+        else {
+            setPriority(item.title);
+        }
+    };
+
+    const onChange = e => {
+        const { name, value } = e.target;
+        const { data } = ticket;
+        setTicket({
+            data: {
+                ...data,
+                [name]: value
+            }
+        });
+    };
+
+    const onAddTicket = async e => {
+        e.preventDefault();
+
+        const { data } = ticket;
+        data.department = department;
+        data.priority = priority;
+
+        await addTicket(data);
+        clearFormFields();
+    };
+
+    const clearFormFields = () => {
+        setTicket({
+            fullname: '',
+            email: '',
+            department: '',
+            priority: '',
+            subject: '',
+            description: ''
+        });
+        setDepartment('Select Department');
+        setPriority('Select Priority');
+    };
 
     return (
         <Fragment>
-            <form>
+            <form onSubmit={onAddTicket}>
                 <div className='form-group'>
                     <FormInput
                         type='text'
@@ -17,7 +86,7 @@ const AddTicketForm = () => {
                         label='FullName'
                         className='form-control'
                         placeholder='Enter FullName'
-                        value=''
+                        value={fullname}
                         error=''
                         onChange={onChange} />
                 </div>
@@ -28,31 +97,21 @@ const AddTicketForm = () => {
                         label='Email'
                         className='form-control'
                         placeholder='Enter Email'
-                        value=''
+                        value={email}
                         error=''
                         onChange={onChange} />
                 </div>
                 <div className='form-group'>
-                    <FormInput
-                        type='text'
-                        name='department'
+                    <Dropdown title={department}
                         label='Department'
-                        className='form-control'
-                        placeholder='Select Department'
-                        value=''
-                        error=''
-                        onChange={onChange} />
+                        list={departments}
+                        getDropdownValue={getDropdownValue} />
                 </div>
                 <div className='form-group'>
-                    <FormInput
-                        type='text'
-                        name='priority'
+                    <Dropdown title={priority}
                         label='Priority'
-                        className='form-control'
-                        placeholder='Select Priority'
-                        value=''
-                        error=''
-                        onChange={onChange} />
+                        list={priorities}
+                        getDropdownValue={getDropdownValue} />
                 </div>
                 <div className='form-group'>
                     <FormInput
@@ -61,17 +120,18 @@ const AddTicketForm = () => {
                         label='Subject'
                         className='form-control'
                         placeholder='Enter Subject'
-                        value=''
+                        value={subject}
                         error=''
                         onChange={onChange} />
                 </div>
                 <div className='form-group'>
                     <label>Description</label>
                     <textarea
-                        className='form-control name=description'
+                        name='description'
+                        className='form-control'
                         row='5'
                         col='40'
-                        value=''
+                        value={description}
                         error=''
                         onChange={onChange}>
                     </textarea>
@@ -79,11 +139,13 @@ const AddTicketForm = () => {
                         type='submit'
                         label='Add'
                         className='btn btn-primary'
+                        disabled={!fullname || !email || !subject || !description || !department || !priorities}
                     />
                     <Button
                         type='submit'
                         label='Cancel'
                         className='btn btn-danger'
+                        handleClick={() => addModal(false)}
                     />
                 </div>
             </form>

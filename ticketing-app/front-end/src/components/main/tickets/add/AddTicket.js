@@ -1,13 +1,21 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import { Modal } from '../../../shared/modal/Modal';
 import { AddTicketForm } from './AddTicketForm';
+import { addModal } from '../../../../redux/actions/modal.actions';
 
-const AddTicket = () => {
-    const [visible, setVisible] = useState(true);
+const AddTicket = props => {
+    const { add, addModal } = props;
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        setVisible(add);
+    }, [setVisible, add]);
 
     const dismissModal = () => {
-        setVisible(false);
+        addModal(false);
     };
 
     return (
@@ -15,11 +23,22 @@ const AddTicket = () => {
             <Modal
                 header='Add New Ticket'
                 visible={visible}
-                children={<AddTicketForm />}
                 dismiss={dismissModal}
+                children={<AddTicketForm addModal={addModal} />}
             />
         </Fragment>
     )
 }
 
-export { AddTicket }
+AddTicket.propTypes = {
+    add: PropTypes.bool
+};
+
+const mapStateToProps = state => ({
+    add: state.modal.add
+});
+
+export default connect(
+    mapStateToProps,
+    { addModal }
+)(AddTicket);
