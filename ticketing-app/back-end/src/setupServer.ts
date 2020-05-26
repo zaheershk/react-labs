@@ -24,12 +24,6 @@ async function startServer(server: Koa) {
     try {
         const serverPort = 4000;
 
-        // const serverStarted: Promise<void> = new Promise((resolve) => {
-        //     server.listen(serverPort, resolve)
-        // });
-        // await serverStarted;
-        // console.log(`Server running on port ${serverPort}`)
-
         const httpServer = new http.Server(server.callback());
         const io = socketIO(httpServer);
         global(io);

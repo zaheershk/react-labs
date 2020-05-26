@@ -1,8 +1,8 @@
 import Mongoose from 'mongoose';
 
 const ticketSchema: Mongoose.Schema = new Mongoose.Schema({
-    ticketid: { type: String },
     user: { type: Mongoose.Schema.Types.ObjectId, ref: 'User' },
+    ticketId: { type: String },
     fullname: { type: String },
     email: { type: String },
     status: { type: String, default: 'Open' },

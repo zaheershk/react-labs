@@ -1,20 +1,37 @@
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import socketIOClient from 'socket.io-client';
 
 import './index.css';
 import Card from '../card/Card';
 import { TableElements } from '../table-elements/TableElements';
 import AddTicket from '../tickets/add/AddTicket';
+import EditTicket from '../tickets/edit/EditTicket';
 import { AuthToken } from '../../../utils/AuthToken';
+import { allTickets, updateTableEntries } from '../../../redux/actions/ticket.actions';
+import { getUser } from '../../../redux/actions/user.actions';
+
+const API_ENDPOINT = 'http://localhost:4000';
 
 const Dashboard = props => {
+    const socket = socketIOClient(API_ENDPOINT);
 
-    const { token } = props;
+    const { token, allTickets, updateTableEntries, getUser } = props;
 
     useEffect(() => {
-        AuthToken(token);
-    }, [token])
+        const dashboardMethods = () => {
+            AuthToken(token);
+            allTickets();
+            updateTableEntries(5);
+            getUser();
+        };
+
+        dashboardMethods();
+        socket.on('refreshPage', () => {
+            dashboardMethods();
+        });
+    }, [token, allTickets, socket, updateTableEntries, getUser]);
 
     return (
         <Fragment>
@@ -24,6 +41,7 @@ const Dashboard = props => {
                         <Card />
                         <TableElements />
                         <AddTicket />
+                        <EditTicket />
                     </div>
                 </div>
             </div>
@@ -32,7 +50,10 @@ const Dashboard = props => {
 };
 
 Dashboard.propTypes = {
-    token: PropTypes.string
+    token: PropTypes.string,
+    allTickets: PropTypes.func.isRequired,
+    updateTableEntries: PropTypes.func.isRequired,
+    getUser: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -41,5 +62,5 @@ const mapStateToProps = state => ({
 
 export default connect(
     mapStateToProps,
-    {}
+    { allTickets, updateTableEntries, getUser }
 )(Dashboard);

@@ -14,7 +14,7 @@ export function registerRoutes() {
     router.post('/login', Auth.prototype.login);
 
     // user-routes
-    router.get('/user', User.prototype.getUser);
+    router.get('/user', verifyToken, User.prototype.getUser);
 
     // ticket-routes
     router.get('/tickets', verifyToken, Ticket.prototype.getAllTickets);

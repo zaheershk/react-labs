@@ -1,10 +1,12 @@
 import Joi from '@hapi/joi';
 import { Context } from 'koa';
-import { v4 as uuidv4 } from 'uuid';
 import HTTP_STATUS from 'http-status-codes';
+
 import { ITicket } from "../../interfaces/ticket.interface";
 import { UserModel } from '../../models/user/User.model';
 import { TicketModel } from '../../models/ticket/Ticket.model';
+
+const RANDOM_VALUE_MULTIPLIER = 10001;
 
 export class Ticket {
     public async getAllTickets(ctx: Context): Promise<void> {
@@ -12,7 +14,7 @@ export class Ticket {
             const tickets = await TicketModel.find({}).sort({ created: -1 });
 
             ctx.response.status = HTTP_STATUS.OK;
-            ctx.body = tickets;
+            ctx.body = { message: 'All tickets', tickets };
         } catch (error) {
             console.log(error);
             ctx.body = error;
@@ -36,7 +38,7 @@ export class Ticket {
             const { id } = ctx.state.user;
 
             value.user = id;
-            value.ticketid = `${uuidv4()}`;
+            value.ticketId = `${Math.floor(Math.random() * RANDOM_VALUE_MULTIPLIER)}`;
 
             const ticket = await TicketModel.create(value);
             if (ticket) {
@@ -45,11 +47,7 @@ export class Ticket {
                         _id: id
                     },
                     {
-                        $push: {
-                            tickets: {
-                                ticket: ticket._id
-                            }
-                        }
+                        $push: { tickets: ticket._id }
                     }
                 );
                 ctx.response.status = HTTP_STATUS.CREATED;
@@ -134,11 +132,7 @@ export class Ticket {
                     _id: id
                 },
                 {
-                    $pull: {
-                        tickets: {
-                            ticket: _id
-                        }
-                    }
+                    $pull: { tickets: _id }
                 }
             );
 

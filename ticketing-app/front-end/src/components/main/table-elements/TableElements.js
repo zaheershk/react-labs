@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 
-import { Entries } from './elements/Entries';
-import { Table } from './table/Table';
+import Entries from './elements/Entries';
+import Table from './table/Table';
 
 const TableElements = () => {
     return (

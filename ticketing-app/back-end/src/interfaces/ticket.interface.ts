@@ -1,7 +1,7 @@
 import Mongoose from 'mongoose';
 
 export interface ITicket extends Mongoose.Document {
-    ticketid: string;
+    ticketId: string;
     user: string;
     fullname: string;
     email: string;

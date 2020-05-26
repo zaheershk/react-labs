@@ -9,7 +9,7 @@ export class User {
             const user = await UserModel.findOne({ _id: id }, { password: 0 }).populate('tickets.ticket');
 
             ctx.response.status = HTTP_STATUS.OK;
-            ctx.body = user;
+            ctx.body = { message: 'User found successfully', user };
         } catch (error) {
             console.log(error);
             ctx.body = error;

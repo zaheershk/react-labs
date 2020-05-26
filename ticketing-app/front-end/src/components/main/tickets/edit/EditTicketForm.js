@@ -1,18 +1,20 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import socketIOClient from 'socket.io-client';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import { FormInput } from '../../../shared/FormInput';
 import { Button } from '../../../shared/Button';
 import { Dropdown } from '../../../shared/dropdown/Dropdown';
 import { departmentList, priorityList } from '../../../../utils/Helpers';
-import { addTicket } from '../../../../services/ticket.service';
+import { editTicket } from '../../../../services/ticket.service';
 
 const API_ENDPOINT = 'http://localhost:4000';
 
-const AddTicketForm = props => {
+const EditTicketForm = props => {
     const socket = socketIOClient(API_ENDPOINT);
 
-    const { addModal } = props;
+    const { editModal, selectedTicket } = props;
 
     let departments = departmentList();
     let priorities = priorityList();
@@ -37,6 +39,23 @@ const AddTicketForm = props => {
         description
     } = ticket.data;
 
+    useEffect(() => {
+        if (selectedTicket) {
+            setTicket({
+                data: {
+                    fullname: selectedTicket.fullname,
+                    email: selectedTicket.email,
+                    department: selectedTicket.department,
+                    priority: selectedTicket.priority,
+                    subject: selectedTicket.subject,
+                    description: selectedTicket.description
+                }
+            });
+            setDepartment(selectedTicket.department);
+            setPriority(selectedTicket.priority);
+        }
+    }, [selectedTicket]);
+
     const getDropdownValue = item => {
         if (item.key === 'department') {
             setDepartment(item.title);
@@ -57,37 +76,20 @@ const AddTicketForm = props => {
         });
     };
 
-    const onAddTicket = async e => {
+    const onEditTicket = async e => {
         e.preventDefault();
 
         const { data } = ticket;
         data.department = department;
         data.priority = priority;
 
-        await addTicket(data);
+        await editTicket(selectedTicket._id, data);
         socket.emit('refresh', {});
-
-        clearFormFields();
-    };
-
-    const clearFormFields = () => {
-        setTicket({
-            data: {
-                fullname: '',
-                email: '',
-                department: '',
-                priority: '',
-                subject: '',
-                description: ''
-            }
-        });
-        setDepartment('Select Department');
-        setPriority('Select Priority');
     };
 
     return (
         <Fragment>
-            <form onSubmit={onAddTicket}>
+            <form onSubmit={onEditTicket}>
                 <div className='form-group'>
                     <FormInput
                         type='text'
@@ -146,7 +148,7 @@ const AddTicketForm = props => {
                     </textarea>
                     <Button
                         type='submit'
-                        label='Add'
+                        label='Edit'
                         className='btn btn-primary'
                         disabled={!fullname || !email || !subject || !description || !department || !priorities}
                     />
@@ -154,7 +156,7 @@ const AddTicketForm = props => {
                         type='submit'
                         label='Cancel'
                         className='btn btn-danger'
-                        handleClick={() => addModal(false)}
+                        handleClick={() => editModal(false)}
                     />
                 </div>
             </form>
@@ -162,4 +164,16 @@ const AddTicketForm = props => {
     )
 }
 
-export { AddTicketForm } 
+EditTicketForm.propTypes = {
+    selectedTicket: PropTypes.object,
+};
+
+const mapStateToProps = state => ({
+    selectedTicket: state.tickets.selectedTicket,
+});
+
+export default connect(
+    mapStateToProps,
+    {}
+)(EditTicketForm);
+
